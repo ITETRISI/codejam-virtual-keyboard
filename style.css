@@ -1,0 +1,50 @@
+button{
+    height: 55px;
+    width: 55px;
+    font-size: 19px;
+    background-color: #3c4245;
+	color: #719192;
+	outline: none;
+	transition: 0.1s;
+}
+
+.active{
+	background-color: #5f6769;
+	border-radius: 20px;
+}
+
+.keyboard{
+    width:825px;
+    margin: 0 auto;
+}
+
+.text_area{
+    display: block;
+    font-size: 20px;
+    margin: 40px auto;
+}
+
+#ShiftLeft{
+    width:110px
+}
+
+#ShiftRight{
+    width:110px
+}
+
+#CapsLock{
+    width:110px
+}
+
+#Enter{
+    width:110px
+}
+
+#Backspace{
+    width:110px
+}
+
+#Space{
+    width:385px;
+}
+
