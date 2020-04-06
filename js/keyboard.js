@@ -119,7 +119,10 @@ document.querySelector('body').innerHTML
 	</div>
 	<span>Change language Ctrl+Alt</span>`;
 
-document.getElementById('text_area').focus();
+	document.getElementById('text_area').focus();
+	document.getElementById('text_area').onblur = ()=>{
+		document.getElementById('text_area').focus();
+	}
 
 Keyboard.drawKeyboard();
 Language.changeLanguage();
