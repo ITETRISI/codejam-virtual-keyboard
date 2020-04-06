@@ -50,7 +50,7 @@ export default class Keyboard {
 			input.setRangeText('    ', input.selectionStart, input.selectionEnd, 'end');
 			break;
 		case 'Enter':
-			document.getElementById('text_area').value += '\n';
+			input.setRangeText('\n', input.selectionStart, input.selectionEnd, 'end');
 			break;
 		case 'Delete':
 			input.setRangeText('', input.selectionStart, input.selectionStart + 1, 'end');
@@ -119,10 +119,10 @@ document.querySelector('body').innerHTML
 	</div>
 	<span>Change language Ctrl+Alt</span>`;
 
+document.getElementById('text_area').focus();
+document.getElementById('text_area').onblur = () => {
 	document.getElementById('text_area').focus();
-	document.getElementById('text_area').onblur = ()=>{
-		document.getElementById('text_area').focus();
-	}
+};
 
 Keyboard.drawKeyboard();
 Language.changeLanguage();
