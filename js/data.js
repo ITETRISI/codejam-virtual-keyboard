@@ -1,4 +1,4 @@
-const arr = [
+const arrayOfKeys = [
 	[
 		{ id: 'Backquote', value: ['`', '~', 'ё', 'Ё'] },
 		{ id: 'Digit1', value: ['1', '!', '1', '!'] },
