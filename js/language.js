@@ -9,29 +9,15 @@ class Language {
 		return sessionStorage.getItem('lang');
 	}
 
-	static changeLanguage() {
-		const codes = ['ControlLeft', 'AltLeft'];
-		const pressed = new Set();
-
-		document.addEventListener('keydown', (event) => {
-			pressed.add(event.code);
-			for (const code of codes) {
-				if (!pressed.has(code)) {
-					return;
-				}
-			}
-			pressed.clear();
+	static changeLanguage(event) {
+		if (event.altKey && event.ctrlKey) {
 			if (sessionStorage.getItem('lang') >= 2) {
-				sessionStorage.setItem('lang', +sessionStorage.getItem('lang') - 2);
+				sessionStorage.setItem('lang', Number(sessionStorage.getItem('lang')) - 2);
 			} else {
-				sessionStorage.setItem('lang', +sessionStorage.getItem('lang') + 2);
+				sessionStorage.setItem('lang', Number(sessionStorage.getItem('lang')) + 2);
 			}
 			Keyboard.rewriteKey();
-		});
-
-		document.addEventListener('keyup', (event) => {
-			pressed.delete(event.code);
-		});
+		}
 	}
 }
 

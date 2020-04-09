@@ -1,4 +1,4 @@
-import arr from './data.js';
+import arrayOfKeys from './data.js';
 import Language from './language.js';
 
 export default class Keyboard {
@@ -6,23 +6,23 @@ export default class Keyboard {
 
 	static pressShift = false;
 
-	static drawKeyboard() {
-		for (let i = 0; i < arr.length; i++) {
-			for (let j = 0; j < arr[i].length; j++) {
-				document.querySelector(`#keyboard_row-${i}`).innerHTML += `<button id='${arr[i][j].id}' >${arr[i][j].value[Language.checkLanguage()]}</button>`;
+	drawKeyboard() {
+		for (let i = 0; i < arrayOfKeys.length; i++) {
+			for (let j = 0; j < arrayOfKeys[i].length; j++) {
+				document.querySelector(`#keyboard_row-${i}`).innerHTML += `<button id='${arrayOfKeys[i][j].id}' >${arrayOfKeys[i][j].value[Language.checkLanguage()]}</button>`;
 			}
 		}
 	}
 
-	static rewriteKey() {
-		for (let i = 0; i < arr.length; i++) {
-			for (let j = 0; j < arr[i].length; j++) {
-				document.querySelector(`#${arr[i][j].id}`).innerText = `${arr[i][j].value[Language.checkLanguage()]}`;
+	rewriteKey() {
+		for (let i = 0; i < arrayOfKeys.length; i++) {
+			for (let j = 0; j < arrayOfKeys[i].length; j++) {
+				document.querySelector(`#${arrayOfKeys[i][j].id}`).innerText = `${arrayOfKeys[i][j].value[Language.checkLanguage()]}`;
 			}
 		}
 	}
 
-	static pressKey(keyCode) {
+	pressKey(keyCode) {
 		const input = document.getElementById('text_area');
 		switch (keyCode) {
 		case 'ControlLeft':
@@ -59,48 +59,50 @@ export default class Keyboard {
 			if (input.selectionStart !== 0) input.setRangeText('', input.selectionStart - 1, input.selectionStart, 'end');
 			break;
 		default:
-			for (let i = 0; i < arr.length; i++) {
-				const result = arr[i].find((key) => key.id === keyCode);
-				if (result !== undefined) {
+			for (let i = 0; i < arrayOfKeys.length; i++) {
+				const result = arrayOfKeys[i].find((key) => key.id === keyCode);
+				if (result) {
 					input.setRangeText(result.value[Language.checkLanguage()], input.selectionStart, input.selectionEnd, 'end');
 				}
 			}
 		}
 	}
 
-	static downShift(keyCode) {
-		if (keyCode === 'ShiftRight' || keyCode === 'ShiftLeft') {
-			if (this.pressShift === false && this.pressCaps === false) {
-				sessionStorage.setItem('lang', +sessionStorage.getItem('lang') + 1);
+	isShift = (key) => key === 'ShiftRight' || key === 'ShiftLeft'
+
+	downShift(keyCode) {
+		if (this.isShift(keyCode)) {
+			if (Keyboard.pressShift === false && Keyboard.pressCaps === false) {
+				sessionStorage.setItem('lang', Number(sessionStorage.getItem('lang')) + 1);
 			} else if (this.pressShift === false) {
-				sessionStorage.setItem('lang', +sessionStorage.getItem('lang') - 1);
+				sessionStorage.setItem('lang', Number(sessionStorage.getItem('lang')) - 1);
 			}
-			this.pressShift = true;
+			Keyboard.pressShift = true;
 			this.rewriteKey();
 		}
 	}
 
-	static upShift(keyCode) {
-		if (keyCode === 'ShiftRight' || keyCode === 'ShiftLeft') {
-			if (this.pressShift === true && this.pressCaps === false) {
-				sessionStorage.setItem('lang', +sessionStorage.getItem('lang') - 1);
+	upShift(keyCode) {
+		if (this.isShift(keyCode)) {
+			if (Keyboard.pressShift === true && Keyboard.pressCaps === false) {
+				sessionStorage.setItem('lang', Number(sessionStorage.getItem('lang')) - 1);
 			} else {
-				sessionStorage.setItem('lang', +sessionStorage.getItem('lang') + 1);
+				sessionStorage.setItem('lang', Number(sessionStorage.getItem('lang')) + 1);
 			}
-			this.pressShift = false;
+			Keyboard.pressShift = false;
 			this.rewriteKey();
 		}
 	}
 
-	static pressCapsLock(keyCode) {
+	pressCapsLock(keyCode) {
 		if (keyCode === 'CapsLock') {
-			if (this.pressCaps === true) {
-				sessionStorage.setItem('lang', +sessionStorage.getItem('lang') - 1);
-				this.pressCaps = false;
+			if (Keyboard.pressCaps === true) {
+				sessionStorage.setItem('lang', Number(sessionStorage.getItem('lang')) - 1);
+				Keyboard.pressCaps = false;
 				document.querySelector('#CapsLock').classList.remove('active');
 			} else {
-				sessionStorage.setItem('lang', +sessionStorage.getItem('lang') + 1);
-				this.pressCaps = true;
+				sessionStorage.setItem('lang', Number(sessionStorage.getItem('lang')) + 1);
+				Keyboard.pressCaps = true;
 				document.querySelector('#CapsLock').classList.add('active');
 			}
 			this.rewriteKey();
@@ -124,31 +126,32 @@ document.getElementById('text_area').onblur = () => {
 	document.getElementById('text_area').focus();
 };
 
-Keyboard.drawKeyboard();
-Language.changeLanguage();
+const keyboard = new Keyboard();
+
+keyboard.drawKeyboard();
 
 window.addEventListener('load', () => {
 	document.addEventListener('keydown', (event) => {
 		event.preventDefault();
-		Keyboard.pressKey(event.code);
+		Language.changeLanguage(event);
+		keyboard.pressKey(event.code);
 		document.querySelector(`#${event.code}`).classList.add('active');
 	});
 
-
 	document.addEventListener('keyup', (event) => {
-		Keyboard.upShift(event.code);
+		keyboard.upShift(event.code);
 		document.querySelector(`#${event.code}`).classList.remove('active');
-		Keyboard.pressCapsLock(event.code);
+		keyboard.pressCapsLock(event.code);
 	});
 
 	document.getElementById('keyboard').addEventListener('mousedown', (event) => {
-		Keyboard.pressKey(event.target.id);
+		keyboard.pressKey(event.target.id);
 		document.querySelector(`#${event.target.id}`).classList.add('active');
 	});
 
 	document.getElementById('keyboard').addEventListener('mouseup', (event) => {
-		Keyboard.upShift(event.target.id);
+		keyboard.upShift(event.target.id);
 		document.querySelector(`#${event.target.id}`).classList.remove('active');
-		Keyboard.pressCapsLock(event.target.id);
+		keyboard.pressCapsLock(event.target.id);
 	});
 });
