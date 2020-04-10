@@ -75,4 +75,4 @@ const arrayOfKeys = [
 	],
 ];
 
-export default arr;
+export default arrayOfKeys;
