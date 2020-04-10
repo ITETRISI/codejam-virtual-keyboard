@@ -6,7 +6,7 @@ export default class Keyboard {
 
 	static pressShift = false;
 
-	drawKeyboard() {
+	static drawKeyboard() {
 		for (let i = 0; i < arrayOfKeys.length; i++) {
 			for (let j = 0; j < arrayOfKeys[i].length; j++) {
 				document.querySelector(`#keyboard_row-${i}`).innerHTML += `<button id='${arrayOfKeys[i][j].id}' >${arrayOfKeys[i][j].value[Language.checkLanguage()]}</button>`;
@@ -14,15 +14,20 @@ export default class Keyboard {
 		}
 	}
 
-	rewriteKey() {
+	static rewriteKey() {
 		for (let i = 0; i < arrayOfKeys.length; i++) {
 			for (let j = 0; j < arrayOfKeys[i].length; j++) {
+				if(this.pressCaps && i===0 && !this.pressShift)
+				document.querySelector(`#${arrayOfKeys[i][j].id}`).innerText = `${arrayOfKeys[i][j].value[i]}`;
+				else if(this.pressCaps && i===0 && this.pressShift)
+				document.querySelector(`#${arrayOfKeys[i][j].id}`).innerText = `${arrayOfKeys[i][j].value[Language.checkLanguage()+1]}`;
+				else
 				document.querySelector(`#${arrayOfKeys[i][j].id}`).innerText = `${arrayOfKeys[i][j].value[Language.checkLanguage()]}`;
 			}
 		}
 	}
 
-	pressKey(keyCode) {
+	static pressKey(keyCode) {
 		const input = document.getElementById('text_area');
 		switch (keyCode) {
 		case 'ControlLeft':
@@ -59,18 +64,14 @@ export default class Keyboard {
 			if (input.selectionStart !== 0) input.setRangeText('', input.selectionStart - 1, input.selectionStart, 'end');
 			break;
 		default:
-			for (let i = 0; i < arrayOfKeys.length; i++) {
-				const result = arrayOfKeys[i].find((key) => key.id === keyCode);
-				if (result) {
-					input.setRangeText(result.value[Language.checkLanguage()], input.selectionStart, input.selectionEnd, 'end');
-				}
-			}
+			let key = document.querySelector(`#${keyCode}`).innerText
+			input.setRangeText(key, input.selectionStart, input.selectionEnd, 'end');
 		}
 	}
 
-	isShift = (key) => key === 'ShiftRight' || key === 'ShiftLeft'
+	static isShift = (key) => key === 'ShiftRight' || key === 'ShiftLeft'
 
-	downShift(keyCode) {
+	static downShift(keyCode) {
 		if (this.isShift(keyCode)) {
 			if (Keyboard.pressShift === false && Keyboard.pressCaps === false) {
 				sessionStorage.setItem('lang', Number(sessionStorage.getItem('lang')) + 1);
@@ -82,7 +83,7 @@ export default class Keyboard {
 		}
 	}
 
-	upShift(keyCode) {
+	static upShift(keyCode) {
 		if (this.isShift(keyCode)) {
 			if (Keyboard.pressShift === true && Keyboard.pressCaps === false) {
 				sessionStorage.setItem('lang', Number(sessionStorage.getItem('lang')) - 1);
@@ -94,7 +95,7 @@ export default class Keyboard {
 		}
 	}
 
-	pressCapsLock(keyCode) {
+	static pressCapsLock(keyCode) {
 		if (keyCode === 'CapsLock') {
 			if (Keyboard.pressCaps === true) {
 				sessionStorage.setItem('lang', Number(sessionStorage.getItem('lang')) - 1);
@@ -126,32 +127,30 @@ document.getElementById('text_area').onblur = () => {
 	document.getElementById('text_area').focus();
 };
 
-const keyboard = new Keyboard();
-
-keyboard.drawKeyboard();
+Keyboard.drawKeyboard();
 
 window.addEventListener('load', () => {
 	document.addEventListener('keydown', (event) => {
 		event.preventDefault();
 		Language.changeLanguage(event);
-		keyboard.pressKey(event.code);
+		Keyboard.pressKey(event.code);
 		document.querySelector(`#${event.code}`).classList.add('active');
 	});
 
 	document.addEventListener('keyup', (event) => {
-		keyboard.upShift(event.code);
+		Keyboard.upShift(event.code);
 		document.querySelector(`#${event.code}`).classList.remove('active');
-		keyboard.pressCapsLock(event.code);
+		Keyboard.pressCapsLock(event.code);
 	});
 
 	document.getElementById('keyboard').addEventListener('mousedown', (event) => {
-		keyboard.pressKey(event.target.id);
+		Keyboard.pressKey(event.target.id);
 		document.querySelector(`#${event.target.id}`).classList.add('active');
 	});
 
 	document.getElementById('keyboard').addEventListener('mouseup', (event) => {
-		keyboard.upShift(event.target.id);
+		Keyboard.upShift(event.target.id);
 		document.querySelector(`#${event.target.id}`).classList.remove('active');
-		keyboard.pressCapsLock(event.target.id);
+		Keyboard.pressCapsLock(event.target.id);
 	});
 });

@@ -4,9 +4,9 @@ class Language {
 	static checkLanguage() {
 		if (sessionStorage.getItem('lang') === null) {
 			sessionStorage.setItem('lang', 0);
-			return sessionStorage.getItem('lang');
+			return Number(sessionStorage.getItem('lang'));
 		}
-		return sessionStorage.getItem('lang');
+		return Number(sessionStorage.getItem('lang'));
 	}
 
 	static changeLanguage(event) {
